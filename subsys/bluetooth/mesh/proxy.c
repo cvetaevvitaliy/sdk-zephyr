@@ -390,7 +390,7 @@ void bt_mesh_proxy_identity_start(struct bt_mesh_subnet *sub)
 void bt_mesh_proxy_identity_stop(struct bt_mesh_subnet *sub)
 {
 	sub->node_id = BT_MESH_NODE_IDENTITY_STOPPED;
-	sub->node_id_start = 0U;
+	sub->node_id_start = k_uptime_get_32();
 }
 
 int bt_mesh_proxy_identity_enable(void)
@@ -1157,6 +1157,7 @@ static struct bt_mesh_subnet *next_sub(void)
 		sub = &bt_mesh.sub[(i + next_idx) % ARRAY_SIZE(bt_mesh.sub)];
 		if (advertise_subnet(sub)) {
 			next_idx = (next_idx + 1) % ARRAY_SIZE(bt_mesh.sub);
+			sub->node_id = BT_MESH_NODE_IDENTITY_RUNNING;
 			return sub;
 		}
 	}
